@@ -26,32 +26,29 @@ class TestRouter(base.TestCase):
             body=dict(
                 router=dict(
                     name='routername',
-                    shared=False,
                     admin_state_up=True
                 )
             )
         )
 
     @mock.patch.object(shade.OpenStackCloud, 'neutron_client')
-    def test_create_network_specific_tenant(self, mock_neutron):
-        self.cloud.create_network("netname", project_id="project_id_value")
-        mock_neutron.create_network.assert_called_with(
+    def test_create_router_specific_tenant(self, mock_neutron):
+        self.cloud.create_router("routername", project_id="project_id_value")
+        mock_neutron.create_router.assert_called_with(
             body=dict(
-                network=dict(
-                    name='netname',
-                    shared=False,
+                router=dict(
+                    name='routername',
                     admin_state_up=True,
                     tenant_id="project_id_value",
                 )
             )
         )
 
-
-    @mock.patch.object(shade.OpenStackCloud, 'get_network')
+    @mock.patch.object(shade.OpenStackCloud, 'get_router')
     @mock.patch.object(shade.OpenStackCloud, 'neutron_client')
-    def test_delete_network(self, mock_neutron, mock_get):
-        mock_get.return_value = dict(id='net-id', name='test-net')
-        self.assertTrue(self.cloud.delete_network('test-net'))
-        mock_get.assert_called_once_with('test-net')
-        mock_neutron.delete_network.assert_called_once_with(network='net-id')
+    def test_delete_router(self, mock_neutron, mock_get):
+        mock_get.return_value = dict(id='router-id', name='test-router')
+        self.assertTrue(self.cloud.delete_router('test-router'))
+        mock_get.assert_called_once_with('test-router')
+        mock_neutron.delete_router.assert_called_once_with(router='router-id')
 
