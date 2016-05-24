@@ -136,7 +136,7 @@ class TestRouter(base.BaseFunctionalTestCase):
 
         self.assertEqual(router_name, router['name'])
         self.assertEqual('ACTIVE', router['status'])
-        self.assertEqual(proj_id, router['project_id'])
+        self.assertEqual(proj_id, router['tenant_id'])
         self.assertEqual(net1['id'], ext_gw_info['network_id'])
         self.assertTrue(ext_gw_info['enable_snat'])
 
