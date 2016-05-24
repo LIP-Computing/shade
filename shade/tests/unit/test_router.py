@@ -11,8 +11,6 @@
 # limitations under the License.
 
 import mock
-import testtools
-
 import shade
 from shade.tests.unit import base
 
@@ -51,4 +49,3 @@ class TestRouter(base.TestCase):
         self.assertTrue(self.cloud.delete_router('test-router'))
         mock_get.assert_called_once_with('test-router')
         mock_neutron.delete_router.assert_called_once_with(router='router-id')
-
