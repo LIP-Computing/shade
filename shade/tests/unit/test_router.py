@@ -11,6 +11,8 @@
 # limitations under the License.
 
 import mock
+import testtools
+
 import shade
 from shade.tests.unit import base
 
@@ -47,5 +49,24 @@ class TestRouter(base.TestCase):
     def test_delete_router(self, mock_neutron, mock_get):
         mock_get.return_value = dict(id='router-id', name='test-router')
         self.assertTrue(self.cloud.delete_router('test-router'))
+        mock_get.assert_called_once_with('test-router')
+        mock_neutron.delete_router.assert_called_once_with(router='router-id')
+
+    @mock.patch.object(shade.OpenStackCloud, 'get_router')
+    def test_delete_router_not_found(self, mock_get):
+        mock_get.return_value = None
+        self.assertFalse(self.cloud.delete_router('test-router'))
+        mock_get.assert_called_once_with('test-router')
+
+    @mock.patch.object(shade.OpenStackCloud, 'get_router')
+    @mock.patch.object(shade.OpenStackCloud, 'neutron_client')
+    def test_delete_router_exception(self, mock_neutron, mock_get):
+        mock_get.return_value = dict(id='router-id', name='test-router')
+        mock_neutron.delete_router.side_effect = Exception()
+        with testtools.ExpectedException(
+                shade.OpenStackCloudException,
+                "Error deleting router test-router"
+        ):
+            self.cloud.delete_router('test-router')
         mock_get.assert_called_once_with('test-router')
         mock_neutron.delete_router.assert_called_once_with(router='router-id')
